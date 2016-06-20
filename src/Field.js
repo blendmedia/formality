@@ -8,6 +8,7 @@ class Field extends React.Component {
     debounce: PropTypes.number.isRequired,
     errorMessage: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
+    validateOnMount: PropTypes.bool,
   };
 
   static defaultProps = {
@@ -45,6 +46,16 @@ class Field extends React.Component {
   componentDidMount() {
     if (this.context.register) {
       this.context.register(this.props.name);
+    }
+
+    if (this.props.validateOnMount) {
+      this.validate();
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.validateOnMount) {
+      this.validate();
     }
   }
 

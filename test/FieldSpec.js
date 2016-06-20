@@ -1,5 +1,5 @@
 import React from "react";
-import { shallow } from "enzyme";
+import { shallow, mount } from "enzyme";
 import { spy } from "sinon";
 
 import Field from "../src/Field";
@@ -21,6 +21,16 @@ describe("<Field /> component", () => {
     );
     expect(wrapper.state()).to.have.property("_value");
     expect(wrapper.instance().getValue()).to.be.equal(null);
+  });
+
+  it("should run validation immediately if validateOnMount is passed", () => {
+    const Valid = () => true;
+    const wrapper = mount(
+      <Field name="example" validateOnMount={true}>
+        <Valid />
+      </Field>
+    );
+    expect(wrapper.state("_valid")).to.be.true;
   });
 
   it("should be able to set it's own value", () => {
