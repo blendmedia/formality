@@ -35,8 +35,10 @@ class Field extends React.Component {
     super(props);
     if (props.debounce) {
       this._debouncedShow = debounce(this._show, props.debounce);
+      this.asyncValidation = debounce(this._asyncValidation, props.debounce);
     } else {
       this._debouncedShow = this._show;
+      this.asyncValidation = this._asyncValidation;
     }
   }
 
@@ -159,17 +161,22 @@ class Field extends React.Component {
     let valid = true;
     // Iterate over provided rules
     for (const rule of this.rules()) {
-      const result = rule.fn({ ...rule.options, value });
       // Separate promises
-      if (typeof result.then === "function") {
+      if (rule.fn.async || rule.options.async) {
         async = true;
-        promises.push(result);
+        promises.push(rule.fn);
       } else {
-        results.push(result);
-        // Exit as soon as we're invalid
-        if (!isValid(result)) {
-          valid = false;
-          break;
+        const result = rule.fn({ ...rule.options, value });
+        if (typeof result.then === "function") {
+          async = true;
+          promises.push(() => result);
+        } else {
+          results.push(result);
+          // Exit as soon as we're invalid
+          if (!isValid(result)) {
+            valid = false;
+            break;
+          }
         }
       }
     }
@@ -181,24 +188,7 @@ class Field extends React.Component {
       this.setValid(null, null, null);
       this.show(false);
 
-      return Promise.all(promises).then(results => {
-        return results.every(result => {
-          return isValid(result);
-        });
-      }, error => {
-        // Use error message if valid also sent
-        if (error && error.message && "valid" in error) {
-          errorMessage = error.message;
-        }
-        return false;
-      })
-      .then(valid => {
-        // Finished processing
-        this.setState({ _validating: false });
-        this.setValid(valid, errorMessage, key);
-
-        return valid;
-      });
+      this.asyncValidation(promises);
     }
 
     if (!async || !valid) {
@@ -209,6 +199,47 @@ class Field extends React.Component {
       return Promise.resolve(valid);
     }
 
+  }
+
+  _asyncValidation(promises) {
+    if (this.props.debounce) {
+
+    }
+    let { errorMessage } = this.props;
+    let key = null;
+    const isValid = result => {
+      if (typeof result === "object") {
+        // Assign error message if found
+        if ("message" in result) {
+          errorMessage = result.message;
+        }
+        if ("key" in result && !result.valid) {
+          key = result.key;
+        }
+        return result.valid;
+      } else {
+        return !!result; // Treat as boolean / null / undefined
+      }
+    };
+
+    Promise.all(promises.map(f => f())).then(results => {
+      return results.every(result => {
+        return isValid(result);
+      });
+    }, error => {
+      // Use error message if valid also sent
+      if (error && error.message && "valid" in error) {
+        errorMessage = error.message;
+      }
+      return false;
+    })
+    .then(valid => {
+      // Finished processing
+      this.setState({ _validating: false });
+      this.setValid(valid, errorMessage, key);
+
+      return valid;
+    });
   }
 
   @autobind

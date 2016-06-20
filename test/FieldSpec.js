@@ -113,9 +113,10 @@ describe("<Field /> component", () => {
       </Field>
     );
 
-    return wrapper.instance().validate().then(() => {
+    wrapper.instance().validate();
+    setTimeout(() => {
       expect(wrapper.instance().isValid()).to.be.false;
-    });
+    }, 1);
   });
 
   it("should set valid to false on a rejected promise", () => {
@@ -128,10 +129,11 @@ describe("<Field /> component", () => {
       </Field>
     );
 
-    return wrapper.instance().validate().then(() => {
+    wrapper.instance().validate();
+    setTimeout(() => {
       expect(wrapper.instance().isValid()).to.be.false;
       expect(wrapper.instance().error()).to.equal("test");
-    });
+    }, 1);
   });
   it("should take the error message from props when not supplied", () => {
     const Invalid = () => false;
@@ -170,10 +172,11 @@ describe("<Field /> component", () => {
       </Field>
     );
 
-    return wrapper.instance().validate().then(() => {
+    wrapper.instance().validate();
+    setTimeout(() => {
       expect(wrapper.instance().isValid()).to.be.false;
       expect(wrapper.instance().error()).to.equal("rejected");
-    });
+    }, 1);
   });
 
   it("should set the _valid state accordingly", () => {
@@ -261,6 +264,52 @@ describe("<Field /> component", () => {
       setTimeout(() => {
         expect(wrapper.instance().error()).to.eql(message);
         resolve();
+      }, 11);
+    });
+  });
+
+  it("should not listen out for promises until debounce has passed", () => {
+    const Invalid = () => Promise.resolve(true);
+    const wrapper = shallow(
+      <Field debounce={10} name="example">
+        <Invalid />
+      </Field>
+    );
+    wrapper.instance().validate();
+
+    // debounce on npm doesn't work with sinon timers
+    return new Promise(resolve => {
+      setTimeout(() => {
+        expect(wrapper.state("_valid")).to.equal(null);
+        setTimeout(() => {
+          expect(wrapper.state("_valid")).to.equal(true);
+          resolve();
+        }, 11);
+      }, 1);
+    });
+  });
+
+  it([
+    "should not run async functions if it is passed as",
+    "an attribute/prop until debounce is fired",
+  ].join(" "), () => {
+    const InvalidWithAttribute = spy(() => Promise.resolve(true));
+    InvalidWithAttribute.async = true;
+    const InvalidWithProp = spy(() => Promise.resolve(true));
+    const wrapper = shallow(
+      <Field debounce={10} name="example">
+        <InvalidWithProp async={true} />
+        <InvalidWithAttribute />
+      </Field>
+    );
+    wrapper.instance().validate();
+    expect(InvalidWithAttribute.called).to.be.false;
+    expect(InvalidWithProp.called).to.be.false;
+    return new Promise(resolve => {
+      setTimeout(() => {
+        expect(InvalidWithAttribute.called).to.be.true;
+        expect(InvalidWithProp.called).to.be.true;
+        resolve(true);
       }, 11);
     });
   });
