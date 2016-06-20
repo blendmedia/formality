@@ -97,6 +97,10 @@ class Field extends React.Component {
     return valid || (this.state._show ? false : null);
   }
 
+  isProcessing() {
+    return this.state._validating;
+  }
+
   error() {
     const { name } = this.props;
     if (!this.state._show) {
@@ -213,9 +217,6 @@ class Field extends React.Component {
   }
 
   _asyncValidation(promises) {
-    if (this.props.debounce) {
-
-    }
     let { errorMessage } = this.props;
     let key = null;
     const isValid = result => {
