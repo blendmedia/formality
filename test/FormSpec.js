@@ -1,5 +1,6 @@
 import React from "react";
 import { mount } from "enzyme";
+import { spy } from "sinon";
 
 import Form from "../src/Form.js";
 import Field from "../src/Field.js";
@@ -112,6 +113,59 @@ describe("<Form /> component", () => {
       name: "my value",
       password: "my value",
     });
+  });
 
+  it("should not call the onSubmit callback when invalid", () => {
+    const Invalid = () => false;
+    const onSubmit = spy();
+    const wrapper = mount(
+      <Form onSubmit={onSubmit}>
+        <Field errorMessage="incorrect username" name="name">
+          <Invalid />
+        </Field>
+      </Form>
+    );
+    const fields = wrapper.find(Field);
+    fields.forEach(field => {
+      field.nodes[0].validate();
+    });
+    wrapper.simulate("submit");
+    expect(onSubmit.called).to.be.false;
+  });
+
+  it("should call the onSubmit callback when valid", () => {
+    const Valid = () => true;
+    const onSubmit = spy();
+    const wrapper = mount(
+      <Form onSubmit={onSubmit}>
+        <Field errorMessage="incorrect username" name="name">
+          <Valid />
+        </Field>
+      </Form>
+    );
+    const fields = wrapper.find(Field);
+    fields.forEach(field => {
+      field.nodes[0].validate();
+    });
+    wrapper.simulate("submit");
+    expect(onSubmit.called).to.be.true;
+  });
+
+  it("should call the onSubmit callback when submitOnInvalid is true", () => {
+    const Invalid = () => false;
+    const onSubmit = spy();
+    const wrapper = mount(
+      <Form onSubmit={onSubmit} submitOnInvalid={true}>
+        <Field errorMessage="incorrect username" name="name">
+          <Invalid />
+        </Field>
+      </Form>
+    );
+    const fields = wrapper.find(Field);
+    fields.forEach(field => {
+      field.nodes[0].validate();
+    });
+    wrapper.simulate("submit");
+    expect(onSubmit.called).to.be.true;
   });
 });
