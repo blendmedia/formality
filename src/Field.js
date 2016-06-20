@@ -1,5 +1,5 @@
 import React, { PropTypes } from "react";
-
+import debounce from "debounce";
 
 class Field extends React.Component {
   static propTypes = {
@@ -20,6 +20,7 @@ class Field extends React.Component {
     setValid: PropTypes.func,
     getError: PropTypes.func,
     isValid: PropTypes.func,
+    register: PropTypes.func,
   };
 
   state = {
@@ -28,6 +29,21 @@ class Field extends React.Component {
     _show: false,
     _message: null,
   };
+
+  constructor(props) {
+    super(props);
+    if (props.debounce) {
+      this._debouncedShow = debounce(this._show, props.debounce);
+    } else {
+      this._debouncedShow = this._show;
+    }
+  }
+
+  componentDidMount() {
+    if (this.context.register) {
+      this.context.register(this.props.name);
+    }
+  }
 
   getValue() {
     const { name } = this.props;
@@ -47,6 +63,7 @@ class Field extends React.Component {
 
   setValid(valid, msg) {
     const { name } = this.props;
+    this.show(!valid);
     return this.context.setValid ?
            this.context.setValid(name, valid, msg) :
            this.setState({
@@ -57,16 +74,34 @@ class Field extends React.Component {
 
   isValid() {
     const { name } = this.props;
-    return this.context.isValid ?
-           this.context.isValid(name) :
-           this.state._valid;
+    const valid = this.context.isValid ?
+                  this.context.isValid(name) :
+                  this.state._valid;
+    return valid || (this.state._show ? false : null);
   }
 
   error() {
     const { name } = this.props;
+    if (!this.state._show) {
+      return null;
+    }
     return this.context.getError ?
            this.context.getError(name) :
            this.state._message;
+  }
+
+  _show(show) {
+    this.setState({
+      _show: show,
+    });
+  }
+
+  show(show) {
+    if (!show) {
+      this._show(show);
+    } else {
+      this._debouncedShow(show);
+    }
   }
 
   rules() {

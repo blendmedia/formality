@@ -182,6 +182,7 @@ describe("<Field /> component", () => {
       </Field>
     );
     invalidWrapper.instance().validate();
+
     expect(invalidWrapper.instance().isValid()).to.be.false;
 
     // Test valid field
@@ -225,4 +226,48 @@ describe("<Field /> component", () => {
       value: "Test Value",
     });
   });
+
+  it("should not reveal the error message until show is true", () => {
+    const message = "Testing Error Messages";
+    const Invalid = () => ({ valid: false, message });
+    const wrapper = shallow(
+      <Field name="example">
+        <Invalid />
+      </Field>
+    );
+    wrapper.instance().validate();
+    wrapper.setState({"_show": false});
+    expect(wrapper.instance().error()).to.eql(null);
+  });
+
+  it("should not show the error until elapsed time when using debounce", () => {
+    const message = "Testing Error Messages";
+    const Invalid = () => ({ valid: false, message });
+    const wrapper = shallow(
+      <Field debounce={300} name="example">
+        <Invalid />
+      </Field>
+    );
+    wrapper.instance().validate();
+    expect(wrapper.instance().error()).to.eql(null);
+    clock.tick(300);
+    // Weird issue with async going on
+    clock.restore();
+    setTimeout(() => {
+      expect(wrapper.instance().error()).to.eql(message);
+    }, 10);
+  });
+
+  it("should set valid value immediately regardless of debounce", () => {
+    const message = "Testing Error Messages";
+    const Invalid = () => ({ valid: false, message });
+    const wrapper = shallow(
+      <Field debounce={300} name="example">
+        <Invalid />
+      </Field>
+    );
+    wrapper.instance().validate();
+    expect(wrapper.state("_valid")).to.equal(false);
+  });
+
 });
