@@ -95,4 +95,23 @@ describe("<Form /> component", () => {
 
     expect(validWrapper.instance().isValid()).to.be.true;
   });
+
+  it("should be able to retrieve all values from fields", () => {
+    const wrapper = mount(
+      <Form>
+        <Field errorMessage="incorrect username" name="name" />
+        <Field name="password" />
+      </Form>
+    );
+    const fields = wrapper.find(Field);
+    fields.forEach(field => {
+      field.nodes[0].setValue("my value");
+    });
+
+    expect(wrapper.instance().values()).to.eql({
+      name: "my value",
+      password: "my value",
+    });
+
+  });
 });

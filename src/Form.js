@@ -4,7 +4,14 @@ import { autobind } from "core-decorators";
 class Form extends React.Component {
   static propTypes = {
     children: PropTypes.node,
-  }
+    onSubmit: PropTypes.func.isRequired,
+    submitOnInvalid: PropTypes.bool,
+  };
+
+  static defaultProps = {
+    onSubmit: () => {},
+    submitOnInvalid: false,
+  };
 
   state = {
 
@@ -93,18 +100,38 @@ class Form extends React.Component {
     };
   }
 
+
+
+  @autobind
   handleSubmit(e) {
     e.preventDefault();
+    const { onSubmit, submitOnInvalid } = this.props;
+    if ((submitOnInvalid || this.isValid()) && onSubmit) {
+      onSubmit({ ...e, data: this.values() });
+    }
   }
 
   isValid() {
-    const vaidMatcher = /^_field_\w+_valid$/;
+    const validMatcher = /^_field_\w+_valid$/;
     for (const key in this.state) {
-      if (vaidMatcher.test(key) && !this.state[key]) {
+      if (validMatcher.test(key) && !this.state[key]) {
         return false;
       }
     }
     return true;
+  }
+
+  values() {
+    const data = {};
+    const valueMatcher = /^_field_(\w+)_value$/;
+    for (const key in this.state) {
+      const matches = key.match(valueMatcher);
+      if (!matches) {
+        continue;
+      }
+      data[matches[1]] = this.state[key];
+    }
+    return data;
   }
 
   render() {

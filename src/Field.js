@@ -174,13 +174,13 @@ class Field extends React.Component {
       }
     }
 
-    if (async && valid) {
-      // Set flag for async processing
-      this.setState({ _validating: true });
-    }
-
     // Process promises
     if (valid && async) {
+      // Set flag for async processing
+      this.setState({ _validating: true });
+      this.setValid(null, null, null);
+      this.show(false);
+
       return Promise.all(promises).then(results => {
         return results.every(result => {
           return isValid(result);

@@ -89,6 +89,20 @@ describe("<Field /> component", () => {
     expect(ValidPromise.called).to.be.true;
   });
 
+  it("should set valid to null if promises are outstanding", () => {
+    const InvalidPromise = spy(() => Promise.resolve(false));
+    const ValidPromise = spy(() => Promise.resolve(true));
+    const wrapper = shallow(
+      <Field name="example">
+        <InvalidPromise />
+        <ValidPromise />
+      </Field>
+    );
+    wrapper.setState({"_valid": true});
+    wrapper.instance().validate();
+    expect(wrapper.state("_valid")).to.equal(null);
+  });
+
   it("should assign validation according to promise results", () => {
     const InvalidPromise = spy(() => Promise.resolve(false));
     const ValidPromise = spy(() => Promise.resolve(true));
