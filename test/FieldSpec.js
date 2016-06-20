@@ -1,0 +1,228 @@
+import React from "react";
+import { shallow } from "enzyme";
+import { spy, useFakeTimers } from "sinon";
+
+import Field from "../src/Field";
+
+let clock = null;
+beforeEach(() => {
+  clock = useFakeTimers();
+});
+
+afterEach(() => {
+  clock.restore();
+});
+
+const MyFunc = () => true;
+class MyClass extends React.Component {}
+
+describe("<Field /> component", () => {
+  it("should render null", () => {
+    const wrapper = shallow(
+      <Field name="example" />
+    );
+    expect(wrapper.node).to.be.null;
+  });
+
+  it("should initial state correctly", () => {
+    const wrapper = shallow(
+      <Field name="example" />
+    );
+    expect(wrapper.state()).to.have.property("_value");
+    expect(wrapper.instance().getValue()).to.be.equal(null);
+  });
+
+  it("should be able to set it's own value", () => {
+    const wrapper = shallow(
+      <Field name="example" />
+    );
+    wrapper.instance().setValue("test value");
+    expect(wrapper.state("_value")).to.be.eql("test value");
+    expect(wrapper.instance().getValue()).to.be.eql("test value");
+  });
+
+  it("should only accept function rules", () => {
+    const wrapper = shallow(
+      <Field name="example">
+        <MyFunc />
+        <MyClass />
+        <button />
+      </Field>
+    );
+
+    expect(wrapper.instance().rules()).to.have.length(2);
+  });
+
+  it("should stop processing rules as soon as one is invalid", () => {
+    const Invalid = spy(() => false);
+    const Valid = spy(() => true);
+    const wrapper = shallow(
+      <Field name="example">
+        <Invalid />
+        <Valid />
+      </Field>
+    );
+
+    wrapper.instance().validate();
+    expect(Invalid.called).to.be.true;
+    expect(Valid.called).to.be.false;
+  });
+
+  it("should continue running validation when a promise is encountered", () => {
+    const InvalidPromise = spy(() => Promise.resolve(false));
+    const Valid = spy(() => true);
+    const wrapper = shallow(
+      <Field name="example">
+        <InvalidPromise />
+        <Valid />
+      </Field>
+    );
+
+    wrapper.instance().validate();
+    expect(InvalidPromise.called).to.be.true;
+    expect(Valid.called).to.be.true;
+  });
+
+  it("should run all promises", () => {
+    const InvalidPromise = spy(() => Promise.resolve(false));
+    const ValidPromise = spy(() => Promise.resolve(true));
+    const wrapper = shallow(
+      <Field name="example">
+        <InvalidPromise />
+        <ValidPromise />
+      </Field>
+    );
+
+    wrapper.instance().validate();
+    expect(InvalidPromise.called).to.be.true;
+    expect(ValidPromise.called).to.be.true;
+  });
+
+  it("should assign validation according to promise results", () => {
+    const InvalidPromise = spy(() => Promise.resolve(false));
+    const ValidPromise = spy(() => Promise.resolve(true));
+    const wrapper = shallow(
+      <Field name="example">
+        <ValidPromise />
+        <InvalidPromise />
+      </Field>
+    );
+
+    return wrapper.instance().validate().then(() => {
+      expect(wrapper.instance().isValid()).to.be.false;
+    });
+  });
+
+  it("should set valid to false on a rejected promise", () => {
+    const FailedPromise = () => new Promise(() => {
+      throw new Error();
+    });
+    const wrapper = shallow(
+      <Field errorMessage="test" name="example">
+        <FailedPromise />
+      </Field>
+    );
+
+    return wrapper.instance().validate().then(() => {
+      expect(wrapper.instance().isValid()).to.be.false;
+      expect(wrapper.instance().error()).to.equal("test");
+    });
+  });
+  it("should take the error message from props when not supplied", () => {
+    const Invalid = () => false;
+    const message = "Testing Error Messages";
+    const wrapper = shallow(
+      <Field errorMessage={message} name="example">
+        <Invalid />
+      </Field>
+    );
+    wrapper.instance().validate();
+    expect(wrapper.instance().error()).to.eql(message);
+  });
+
+  it("should take the error message from the validation response", () => {
+    const message = "Testing Error Messages";
+    const Invalid = () => ({ valid: false, message });
+    const wrapper = shallow(
+      <Field name="example">
+        <Invalid />
+      </Field>
+    );
+    wrapper.instance().validate();
+    expect(wrapper.instance().error()).to.eql(message);
+  });
+
+  it("should grab the error message from a rejection", () => {
+    const FailedPromise = () => new Promise(() => {
+      throw {
+        valid: false,
+        message: "rejected",
+      };
+    });
+    const wrapper = shallow(
+      <Field errorMessage="test" name="example">
+        <FailedPromise />
+      </Field>
+    );
+
+    return wrapper.instance().validate().then(() => {
+      expect(wrapper.instance().isValid()).to.be.false;
+      expect(wrapper.instance().error()).to.equal("rejected");
+    });
+  });
+
+  it("should set the _valid state accordingly", () => {
+    const Invalid = () => false;
+    const Valid = () => true;
+
+    // Test invalid field
+    const invalidWrapper = shallow(
+      <Field name="example">
+        <Invalid />
+      </Field>
+    );
+    invalidWrapper.instance().validate();
+    expect(invalidWrapper.instance().isValid()).to.be.false;
+
+    // Test valid field
+    const validWrapper = shallow(
+      <Field name="example">
+        <Valid />
+      </Field>
+    );
+    validWrapper.instance().validate();
+    expect(validWrapper.instance().isValid()).to.be.true;
+  });
+
+  it("should pass all props back to the validator", () => {
+    const Invalid = spy(() => false);
+    const wrapper = shallow(
+      <Field name="example">
+        <Invalid from="example" to="test"  />
+      </Field>
+    );
+    wrapper.instance().validate();
+    expect(Invalid.firstCall.args[0]).to.include({
+      to: "test",
+      from: "example",
+    });
+  });
+
+  it("should pass (and replace) the current value to the validator", () => {
+    const Invalid = spy(() => false);
+    const wrapper = shallow(
+      <Field name="example">
+        <Invalid
+          from="example"
+          to="test"
+          value="wrong"
+        />
+      </Field>
+    );
+    wrapper.instance().setValue("Test Value");
+    wrapper.instance().validate();
+    expect(Invalid.firstCall.args[0]).to.include({
+      value: "Test Value",
+    });
+  });
+});
