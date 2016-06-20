@@ -1,7 +1,7 @@
 {
   "name": "@thinmartian/formality",
   "version": "1.0.0",
-  "description": "A simple to use react form library",
+  "description": "A simple & composable react form library",
   "main": "lib/index.js",
   "repository": "git@github.com:thinmartian/formality.git",
   "scripts": {
