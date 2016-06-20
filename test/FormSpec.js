@@ -1,11 +1,16 @@
 import React from "react";
-import { mount } from "enzyme";
+import { shallow, mount } from "enzyme";
 import { spy } from "sinon";
 
 import Form from "../src/Form.js";
 import Field from "../src/Field.js";
 
 describe("<Form /> component", () => {
+  it("should render a form with onSubmit bound", () => {
+    const wrapper = shallow(<Form />);
+    expect(wrapper.is("form")).to.be.true;
+    expect(wrapper.prop("onSubmit")).to.be.instanceof(Function);
+  });
   it("should initialize state for any fields provided as children", () => {
     const wrapper = mount(
       <Form>
