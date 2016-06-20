@@ -61,12 +61,13 @@ class Field extends React.Component {
            });
   }
 
-  setValid(valid, msg) {
+  setValid(valid, msg, key) {
     const { name } = this.props;
     this.show(!valid);
     return this.context.setValid ?
            this.context.setValid(name, valid, msg) :
            this.setState({
+             _invalid_on: key,
              _valid: valid,
              _message: valid ? null : msg,
            });
@@ -104,6 +105,10 @@ class Field extends React.Component {
     }
   }
 
+  errorKey() {
+    return this.state._show ? this.state._invalid_on : null;
+  }
+
   rules() {
     const { children } = this.props;
     return React.Children.map(children, rule => {
@@ -124,11 +129,15 @@ class Field extends React.Component {
 
   validate() {
     let { errorMessage } = this.props;
+    let key = null;
     const isValid = result => {
       if (typeof result === "object") {
         // Assign error message if found
         if ("message" in result) {
           errorMessage = result.message;
+        }
+        if ("key" in result && !result.valid) {
+          key = result.key;
         }
         return result.valid;
       } else {
@@ -183,7 +192,7 @@ class Field extends React.Component {
       .then(valid => {
         // Finished processing
         this.setState({ _validating: false });
-        this.setValid(valid, errorMessage);
+        this.setValid(valid, errorMessage, key);
 
         return valid;
       });
@@ -192,7 +201,7 @@ class Field extends React.Component {
     if (!async || !valid) {
       // Finished processing
       this.setState({ _validating: false });
-      this.setValid(valid, errorMessage);
+      this.setValid(valid, errorMessage, key);
 
       return Promise.resolve(valid);
     }

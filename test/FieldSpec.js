@@ -1,17 +1,8 @@
 import React from "react";
 import { shallow } from "enzyme";
-import { spy, useFakeTimers } from "sinon";
+import { spy } from "sinon";
 
 import Field from "../src/Field";
-
-let clock = null;
-beforeEach(() => {
-  clock = useFakeTimers();
-});
-
-afterEach(() => {
-  clock.restore();
-});
 
 const MyFunc = () => true;
 class MyClass extends React.Component {}
@@ -244,18 +235,20 @@ describe("<Field /> component", () => {
     const message = "Testing Error Messages";
     const Invalid = () => ({ valid: false, message });
     const wrapper = shallow(
-      <Field debounce={300} name="example">
+      <Field debounce={10} name="example">
         <Invalid />
       </Field>
     );
     wrapper.instance().validate();
     expect(wrapper.instance().error()).to.eql(null);
-    clock.tick(300);
-    // Weird issue with async going on
-    clock.restore();
-    setTimeout(() => {
-      expect(wrapper.instance().error()).to.eql(message);
-    }, 10);
+
+    // debounce on npm doesn't work with sinon timers
+    return new Promise(resolve => {
+      setTimeout(() => {
+        expect(wrapper.instance().error()).to.eql(message);
+        resolve();
+      }, 11);
+    });
   });
 
   it("should set valid value immediately regardless of debounce", () => {
@@ -270,4 +263,14 @@ describe("<Field /> component", () => {
     expect(wrapper.state("_valid")).to.equal(false);
   });
 
+  it("should retrieve the key of the rule that was rejected", () => {
+    const Invalid = () => ({ valid: false, key: "req" });
+    const wrapper = shallow(
+      <Field debounce={300} name="example">
+        <Invalid />
+      </Field>
+    );
+    wrapper.instance().validate();
+    expect(wrapper.state("_invalid_on")).to.equal("req");
+  });
 });
