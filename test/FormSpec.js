@@ -11,6 +11,15 @@ describe("<Form /> component", () => {
     expect(wrapper.is("form")).to.be.true;
     expect(wrapper.prop("onSubmit")).to.be.instanceof(Function);
   });
+
+  it("should prevent default on form submit", () => {
+    let e = null;
+    const onSubmit = event => e = event;
+    const wrapper = mount(<Form onSubmit={onSubmit} />);
+    wrapper.simulate("submit");
+    expect(e.defaultPrevented).to.be.true;
+  });
+
   it("should initialize state for any fields provided as children", () => {
     const wrapper = mount(
       <Form>
