@@ -1,5 +1,6 @@
 import React, { PropTypes } from "react";
 import debounce from "debounce";
+import { autobind } from "core-decorators";
 
 class Field extends React.Component {
   static propTypes = {
@@ -54,11 +55,13 @@ class Field extends React.Component {
 
   setValue(value) {
     const { name } = this.props;
-    return this.context.setValue ?
-           this.context.setValue(name, value) :
-           this.setState({
-             _value: value,
-           });
+    const result = this.context.setValue ?
+                   this.context.setValue(name, value) :
+                   this.setState({
+                     _value: value,
+                   });
+    this.validate();
+    return result;
   }
 
   setValid(valid, msg, key) {
@@ -111,7 +114,7 @@ class Field extends React.Component {
 
   rules() {
     const { children } = this.props;
-    return React.Children.map(children, rule => {
+    return React.Children.toArray(children).map(rule => {
       const validator = rule.type;
       if (typeof validator === "function") {
         return {
@@ -206,6 +209,11 @@ class Field extends React.Component {
       return Promise.resolve(valid);
     }
 
+  }
+
+  @autobind
+  handleChange({ currentTarget: { value }}) {
+    this.setValue(value);
   }
 
   render() {
