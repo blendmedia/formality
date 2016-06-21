@@ -6,7 +6,7 @@
   "repository": "git@github.com:thinmartian/formality.git",
   "scripts": {
     "lint": "eslint src/ test/",
-    "test": "mocha --compilers js:babel-register",
+    "test": "mocha --compilers js:babel-register --recursive",
     "test:watch": "npm run test -- --watch",
     "pretest": "npm run lint",
     "compile": "babel src/ --out-dir lib/",
