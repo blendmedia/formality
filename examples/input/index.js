@@ -56,6 +56,19 @@ ReactDOM.render(
     <Input debounce={300} name="username">
       <Async />
     </Input>
+    <h1>Validate on Mount</h1>
+    <Input
+      debounce={300}
+      name="username"
+      validateOnMount={true}
+    >
+      <Required />
+    </Input>
+    <h1>Ignore Debounce: Required & Email</h1>
+    <Input debounce={300} name="username">
+      <Required noDebounce={true} />
+      <IsEmail />
+    </Input>
   </div>,
   document.getElementById("app")
 );
