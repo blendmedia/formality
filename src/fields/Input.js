@@ -34,6 +34,7 @@ class Input extends Field {
         <span className={`${cls}__error`}>{error}</span>
         <input
           {...this.props}
+          children={void 0}
           className={`${cls}__control`}
           defaultValue={void 0}
           onChange={this.handleChange}

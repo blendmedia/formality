@@ -1,18 +1,6 @@
-body
-  font-family: Arial
-
-h1
-  font-size: 16px
-  font-weight: normal
-  text-align: center
-  margin: 45px 0 0
+@import "../common"
 
 .Select
-  margin: 10px auto
-  width: 400px
-  box-sizing: border-box
-  position: relative
-
   &::before
     content: ""
     width: 0
@@ -21,12 +9,11 @@ h1
     border-width: 6.9px 4px 0 4px
     border-color: #333333 transparent transparent transparent
     position: absolute
-    right: 13px
-    bottom: 13px
+    right: 63px
+    bottom: 63px
     pointer-events: none
 
   &--working
-    padding-right: 50px
     &::before
       right: 63px
     &::after
@@ -36,8 +23,8 @@ h1
       background: #777
       display: block
       position: absolute
-      right: 0
-      bottom: 6px
+      right: 13px
+      bottom: 56px
       animation: spin 1s linear infinite
 
 
