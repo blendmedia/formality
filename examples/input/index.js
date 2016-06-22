@@ -54,7 +54,7 @@ ReactDOM.render(
     </Input>
     <h1>Async (Debounced)</h1>
     <Input debounce={300} name="username">
-      <Async />
+      <Async message="Username taken" />
     </Input>
     <h1>Validate on Mount</h1>
     <Input
