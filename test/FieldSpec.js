@@ -33,6 +33,21 @@ describe("<Field /> component", () => {
     expect(wrapper.state("_valid")).to.be.true;
   });
 
+  it("should ignore the debounce value when validating on mount", () => {
+    const Invalid = () => false;
+    const wrapper = mount(
+      <Field
+        debounce={300}
+        name="example"
+        validateOnMount={true}
+      >
+        <Invalid />
+      </Field>
+    );
+    expect(wrapper.state("_valid")).to.be.false;
+    expect(wrapper.state("_show")).to.be.true;
+  });
+
   it("should be able to set it's own value", () => {
     const wrapper = shallow(
       <Field name="example" />
@@ -40,6 +55,16 @@ describe("<Field /> component", () => {
     wrapper.instance().setValue("test value");
     expect(wrapper.state("_value")).to.be.eql("test value");
     expect(wrapper.instance().getValue()).to.be.eql("test value");
+  });
+
+  it("should run validation immediately with own value upon setting", () => {
+    const wrapper = shallow(
+      <Field name="example" />
+    );
+    wrapper.instance().validate = spy();
+    wrapper.instance().setValue("test value");
+    expect(wrapper.instance().validate.calledOnce).to.be.true;
+    expect(wrapper.instance().validate.calledWith("test value")).to.be.true;
   });
 
   it("should only accept function rules", () => {
@@ -145,6 +170,7 @@ describe("<Field /> component", () => {
       expect(wrapper.instance().error()).to.equal("test");
     }, 1);
   });
+
   it("should take the error message from props when not supplied", () => {
     const Invalid = () => false;
     const message = "Testing Error Messages";
@@ -320,6 +346,54 @@ describe("<Field /> component", () => {
         expect(InvalidWithAttribute.called).to.be.true;
         expect(InvalidWithProp.called).to.be.true;
         resolve(true);
+      }, 11);
+    });
+  });
+
+  it("should ignore debounce value when responding to a promise", () => {
+    const InvalidWithAttribute = () => Promise.resolve(false);
+    InvalidWithAttribute.async = true;
+    const wrapper = shallow(
+      <Field debounce={10} name="example">
+        <InvalidWithAttribute />
+      </Field>
+    );
+    wrapper.instance().validate();
+    return new Promise(resolve => {
+      setTimeout(() => {
+        expect(wrapper.state("_valid")).to.be.false;
+        expect(wrapper.state("_show")).to.be.true;
+        resolve();
+      }, 12);
+    });
+  });
+
+  it("should ignore debounce if noDebounce is provided to validator", () => {
+    const NoDebounce = () => false;
+    NoDebounce.noDebounce = true;
+    const wrapper = shallow(
+      <Field debounce={10} name="example">
+        <NoDebounce />
+      </Field>
+    );
+    wrapper.instance().validate();
+    expect(wrapper.state("_valid")).to.be.false;
+    expect(wrapper.state("_show")).to.be.true;
+  });
+
+  it("should not set processing flag until debounce has passed", () => {
+    const Async = () => new Promise(resolve => setTimeout(resolve, 100));
+    const wrapper = shallow(
+      <Field debounce={10} name="example">
+        <Async />
+      </Field>
+    );
+    wrapper.instance().validate();
+    expect(wrapper.state("_validating")).to.be.false;
+    return new Promise(resolve => {
+      setTimeout(() => {
+        expect(wrapper.state("_validating")).to.be.true;
+        resolve();
       }, 11);
     });
   });

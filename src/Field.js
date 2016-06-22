@@ -30,6 +30,7 @@ class Field extends React.Component {
     _valid: null,
     _show: false,
     _message: null,
+    _validating: false,
   };
 
   constructor(props) {
@@ -49,13 +50,13 @@ class Field extends React.Component {
     }
 
     if (this.props.validateOnMount) {
-      this.validate();
+      this.validate(void 0, true);
     }
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.validateOnMount) {
-      this.validate();
+      this.validate(void 0, true);
     }
   }
 
@@ -73,13 +74,18 @@ class Field extends React.Component {
                    this.setState({
                      _value: value,
                    });
-    this.validate();
+    this.show(false);
+    this.validate(value);
     return result;
   }
 
-  setValid(valid, msg, key) {
+  setValid(valid, msg, key, ignoreDebounce = false) {
     const { name } = this.props;
-    this.show(!valid);
+    if (ignoreDebounce) {
+      this._show(valid === false);
+    } else {
+      this.show(valid === false);
+    }
     return this.context.setValid ?
            this.context.setValid(name, valid, msg) :
            this.setState({
@@ -147,7 +153,7 @@ class Field extends React.Component {
     }).filter(rule => !!rule);
   }
 
-  validate() {
+  validate(value = this.getValue(), ignoreDebounce = false) {
     let { errorMessage } = this.props;
     let key = null;
     const isValid = result => {
@@ -164,8 +170,6 @@ class Field extends React.Component {
         return !!result; // Treat as boolean / null / undefined
       }
     };
-
-    const value = this.getValue();
     let async = false;
     // Resolve all rules as promises
     const promises = [];
@@ -189,6 +193,9 @@ class Field extends React.Component {
           results.push(result);
           // Exit as soon as we're invalid
           if (!isValid(result)) {
+            if (rule.fn.noDebounce || rule.options.noDebounce) {
+              ignoreDebounce = true;
+            }
             valid = false;
             break;
           }
@@ -199,8 +206,7 @@ class Field extends React.Component {
     // Process promises
     if (valid && async) {
       // Set flag for async processing
-      this.setState({ _validating: true });
-      this.setValid(null, null, null);
+      this.setValid(null, null, null, ignoreDebounce);
       this.show(false);
 
       this.asyncValidation(promises);
@@ -209,7 +215,7 @@ class Field extends React.Component {
     if (!async || !valid) {
       // Finished processing
       this.setState({ _validating: false });
-      this.setValid(valid, errorMessage, key);
+      this.setValid(valid, errorMessage, key, ignoreDebounce);
 
       return Promise.resolve(valid);
     }
@@ -217,6 +223,7 @@ class Field extends React.Component {
   }
 
   _asyncValidation(promises) {
+    this.setState({ _validating: true });
     let { errorMessage } = this.props;
     let key = null;
     const isValid = result => {
@@ -248,8 +255,7 @@ class Field extends React.Component {
     .then(valid => {
       // Finished processing
       this.setState({ _validating: false });
-      this.setValid(valid, errorMessage, key);
-
+      this.setValid(valid, errorMessage, key, true);
       return valid;
     });
   }
