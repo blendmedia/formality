@@ -13,8 +13,22 @@ h1
   box-sizing: border-box
   position: relative
 
+  &::before
+    content: ""
+    width: 0
+    height: 0
+    border-style: solid
+    border-width: 6.9px 4px 0 4px
+    border-color: #333333 transparent transparent transparent
+    position: absolute
+    right: 13px
+    bottom: 13px
+    pointer-events: none
+
   &--working
     padding-right: 50px
+    &::before
+      right: 63px
     &::after
       content: ""
       width: 25px
