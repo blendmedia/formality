@@ -13,14 +13,13 @@ class Select extends Field {
         label: PropTypes.string.isRequired,
         value: PropTypes.string.isRequired,
       }),
-    ])),
+    ])).isRequired,
     type: PropTypes.string.isRequired,
   };
 
   static defaultProps = {
     ...Field.defaultProps,
     className: "Select",
-    type: "text",
   };
 
   clearOnChange = false;
@@ -44,7 +43,7 @@ class Select extends Field {
   }
 
   render() {
-    const { className: cls, type, options } = this.props;
+    const { className: cls, options } = this.props;
     const value = this.getValue();
     const error = this.error();
     const errorKey = this.errorKey();
@@ -60,9 +59,10 @@ class Select extends Field {
       >
         <span className={`${cls}__error`}>{error}</span>
         <select
+          {...this.props}
           className={`${cls}__control`}
+          defaultValue={void 0}
           onChange={this.handleChange}
-          type={type}
           value={value || ""}
         >
           {options.map((opt, index) => (

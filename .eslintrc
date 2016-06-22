@@ -36,7 +36,6 @@
     "jsx-quotes": [1, "prefer-double"],
     "max-len": [1, 80, 2],
     "no-lonely-if": 1,
-    "react/forbid-prop-types": 1,
     "react/jsx-boolean-value": [1, "always"],
     "react/jsx-closing-bracket-location": [1, "tag-aligned"],
     "react/jsx-curly-spacing": [1, "never"],
