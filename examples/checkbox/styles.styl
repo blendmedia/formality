@@ -13,6 +13,9 @@ h1
   box-sizing: border-box
   position: relative
 
+  &--checked
+    color: #090
+
   &--working
     padding-right: 50px
     &::after
@@ -40,7 +43,7 @@ h1
 
   &__label
     box-sizing: border-box
-    padding: 10px
+    padding: 10px 10px 10px 0
     width: 100%
     outline: none
     display: block
@@ -48,7 +51,8 @@ h1
     -webkit-appearance: none
 
   &__control
-    margin-right: 5px
+    margin: 3px 5px 3px 0
+    vertical-align: top
 
 
   &--error--req

@@ -52,6 +52,7 @@ class Checkbox extends Field {
         className={classnames(cls, {
           [`${cls}--error`]: valid,
           [`${cls}--working`]: this.isProcessing(),
+          [`${cls}--checked`]: checked,
           [errorKey ? `${cls}--error--${errorKey}` : false]: valid,
         })}
       >
