@@ -8,7 +8,6 @@ describe("<Input /> component", () => {
     const wrapper = shallow(<Input name="username" />);
     expect(wrapper.is("div.Input")).to.be.true;
     expect(wrapper.find("input.Input__control")).to.have.length(1);
-    expect(wrapper.find(".Input__error")).to.have.length(0);
   });
 
   it("should update it's value on change of the <input>", () => {

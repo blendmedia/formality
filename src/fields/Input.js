@@ -31,12 +31,12 @@ class Input extends Field {
           [errorKey ? `${cls}--error--${errorKey}` : false]: valid,
         })}
       >
-        {error ? <span className={`${cls}__error`}>{error}</span> : null}
+        <span className={`${cls}__error`}>{error}</span>
         <input
           className={`${cls}__control`}
           onChange={this.handleChange}
           type={type}
-          value={value}
+          value={value || ""}
         />
       </div>
     );
