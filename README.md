@@ -16,60 +16,70 @@ Validation is done by passing validation functions as children to an Input compo
 
 ### Standard validation with debounce
 
-    import { Input, isEmail } from "@thinmartian/formality";
+```javascript
+import { Input, isEmail } from "@thinmartian/formality";
 
-    <Input debounce={300} name="email">
-        <IsEmail />
-    </Input
+<Input debounce={300} name="email">
+    <IsEmail />
+</Input>
+```
     
 ### Validation with message override
 
-    import { Input, Required } from "@thinmartian/formality";
-    
-    <input name="username">
-        <Required message="Please supply a username" />
-    </Input>
+```javascript
+import { Input, Required } from "@thinmartian/formality";
+
+<input name="username">
+    <Required message="Please supply a username" />
+</Input>
+```
 
 ### Async validation
 
-    const AsyncCheck = ({ value }) => {
-        return new Promise(resolve => {
-            setTimeout(() => resolve(value === "correct"), 1000);
-        });
-    }
-    // Uncomment to mark validation as asyncrounous, it will be treated as async without executing the promise
-    // AsyncCheck.async = true;
+```javascript
+const AsyncCheck = ({ value }) => {
+    return new Promise(resolve => {
+        setTimeout(() => resolve(value === "correct"), 1000);
+    });
+}
+// Uncomment to mark validation as asyncrounous, it will be treated as async without executing the promise
+// AsyncCheck.async = true;
 
-    import { Input, Required } from "@thinmartian/formality";
-    
-    <Input name="server_check">
-        <Required />
-        <AsyncCheck />
-    </Input>
+import { Input, Required } from "@thinmartian/formality";
+
+<Input name="server_check">
+    <Required />
+    <AsyncCheck />
+</Input>
+```
 
 ### Creating a validator (manual)
 
-    const MyCustomValidator = ({ value, is /* props */}) => {
-        // return value === is; // Can return a boolean, message will be loaded from props or parent Input
-        return {
-            vaiid: value === is,
-            message: `Value does not equal ${is}`,
-            key: "equal"
-        }
+```javascript
+const MyCustomValidator = ({ value, is /* props */}) => {
+    // return value === is; // Can return a boolean, message will be loaded from props or parent Input
+    return {
+        vaiid: value === is,
+        message: `Value does not equal ${is}`,
+        key: "equal"
     }
+}
 
-    // Usage
-    <MyCustomValidator is="matched" />
+// Usage
+<MyCustomValidator is="matched" />
+```
 
 ### Creating a validator (from a boolean function via compose)
 
-    import { compose } from "@thinmartian/formality"
-    import isAlpha from "validator/lib/isAlpha"
+```
+import { compose } from "@thinmartian/formality"
+import isAlpha from "validator/lib/isAlpha"
 
-    const IsAlpha = compose(isAlpha, "Please enter an alphabetical string only", "alpha")
+const IsAlpha = compose(isAlpha, "Please enter an alphabetical string only", "alpha")
 
-    // Usage
-    <IsAlpha />
+// Usage
+<IsAlpha />
+```
 
 ## Examples
 
