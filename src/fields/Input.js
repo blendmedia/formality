@@ -21,14 +21,16 @@ class Input extends Field {
     const value = this.getValue();
     const error = this.error();
     const errorKey = this.errorKey();
-    const valid = this.isValid() === false;
+    const valid = this.isValid();
+    const invalid = this.isValid() === false;
 
     return (
       <div
         className={classnames(cls, {
-          [`${cls}--error`]: valid,
+          [`${cls}--error`]: invalid,
+          [`${cls}--valid`]: valid,
           [`${cls}--working`]: this.isProcessing(),
-          [errorKey ? `${cls}--error--${errorKey}` : false]: valid,
+          [errorKey ? `${cls}--error--${errorKey}` : false]: invalid,
         })}
       >
         <span className={`${cls}__error`}>{error}</span>

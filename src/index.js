@@ -9,3 +9,4 @@ export Field from "./Field";
 export Input from "./fields/Input";
 export Select from "./fields/Select";
 export Checkbox from "./fields/Checkbox";
+export * from "./rules";

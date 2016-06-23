@@ -2,32 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 
 import "./styles.styl";
-import { Input } from "@thinmartian/formality";
-
-import isEmail from "validator/lib/isEmail";
-
-const Required = ({ value }) => {
-  if (value) {
-    return true;
-  }
-
-  return {
-    valid: false,
-    message: "This field is required",
-    key: "req",
-  };
-};
-
-const IsEmail = ({ value }) => {
-  if (value && !isEmail(value + "")) {
-    return {
-      valid: false,
-      message: "Please enter a valid email address",
-      key: "email",
-    };
-  }
-  return true;
-};
+import { Input, IsEmail, Required } from "@thinmartian/formality";
 
 const Async = ({ value }) => {
   if (!value) {
@@ -43,7 +18,7 @@ const Async = ({ value }) => {
     }, 1000);
   });
 };
-Async.sync = true;
+Async.async = true;
 
 ReactDOM.render(
   <div>

@@ -26,6 +26,10 @@ module.exports = {
     alias: {
       "@thinmartian/formality": path.join(__dirname, "../../src"),
     },
+    modulesDirectories: [
+      path.join(__dirname, "../..", "node_modules"),
+      path.join(__dirname, "node_modules"),
+    ],
   },
   resolveLoader: {
     modulesDirectories: [
