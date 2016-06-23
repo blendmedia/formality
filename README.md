@@ -4,7 +4,7 @@ React forms with courtesy.
 
 ## Introduction
 
-Formaiity aims to be a simple and composable library for validated input and forms in React. The provided input components can be used without any parent container, and can be interacted with like a standard component via `onChange`.
+Formality aims to be a simple and composable library for validated input and forms in React. The provided input components can be used without any parent container, and can be interacted with like a standard component via `onChange`.
 
 Alternatively your inputs can be wrapped in a `<Form />` component which will retrieve all data and pass it to the `onSubmit` event handler- which is only fired when all input is valid (unless you pass `submitOnInvalid`)!. 
 
@@ -42,7 +42,8 @@ const AsyncCheck = ({ value }) => {
         setTimeout(() => resolve(value === "correct"), 1000);
     });
 }
-// Uncomment to mark validation as asyncrounous, it will be treated as async without executing the promise
+// Uncomment to mark validation as asynchronous
+// it will be treated as async without executing the promise
 // AsyncCheck.async = true;
 
 import { Input, Required } from "@thinmartian/formality";
@@ -57,7 +58,8 @@ import { Input, Required } from "@thinmartian/formality";
 
 ```javascript
 const MyCustomValidator = ({ value, is /* props */}) => {
-    // return value === is; // Can return a boolean, message will be loaded from props or parent Input
+    // Can return a boolean, message will be loaded from props or parent Input
+    // return value === is; 
     return {
         vaiid: value === is,
         message: `Value does not equal ${is}`,
@@ -75,7 +77,11 @@ const MyCustomValidator = ({ value, is /* props */}) => {
 import { compose } from "@thinmartian/formality"
 import isAlpha from "validator/lib/isAlpha"
 
-const IsAlpha = compose(isAlpha, "Please enter an alphabetical string only", "alpha")
+const IsAlpha = compose(
+    isAlpha,
+    "Please enter an alphabetical string only",
+    "alpha"
+)
 
 // Usage
 <IsAlpha />
