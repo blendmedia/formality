@@ -8,12 +8,14 @@ class Field extends React.Component {
     debounce: PropTypes.number.isRequired,
     errorMessage: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
+    onChange: PropTypes.func.isRequired,
     validateOnMount: PropTypes.bool,
   };
 
   static defaultProps = {
     debounce: 0,
     errorMessage: "Invalid data",
+    onChange: () => {},
   };
 
   static contextTypes = {
@@ -73,19 +75,28 @@ class Field extends React.Component {
            this.state._value;
   }
 
-  setValue(value) {
+  setValue(value, event = {}) {
     const { name } = this.props;
     const result = this.context.setValue ?
                    this.context.setValue(name, value) :
                    this.setState({
                      _value: value,
                    });
-    this.show(false);
+    if (this.clearOnChange) {
+      this.show(false);
+    }
     this.validate(value);
+
+    if (this.props.onChange) {
+      const e = { currentTarget: {}, target: {}, ...event};
+      e.currentTarget.value = e.target.value = value;
+      this.props.onChange(e);
+    }
+
     return result;
   }
 
-  setValid(valid, msg, key, ignoreDebounce = false) {
+  setValid(valid, msg = null, key = null, ignoreDebounce = false) {
     const { name } = this.props;
     if (ignoreDebounce) {
       this._show(valid === false);
@@ -267,8 +278,9 @@ class Field extends React.Component {
   }
 
   @autobind
-  handleChange({ currentTarget: { value }}) {
-    this.setValue(value);
+  handleChange(e) {
+    const { currentTarget: { value } } = e;
+    this.setValue(value, e);
   }
 
   render() {

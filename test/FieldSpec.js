@@ -73,6 +73,21 @@ describe("<Field /> component", () => {
     expect(wrapper.instance().getValue()).to.be.eql("test value");
   });
 
+  it("should trigger onchange when setting value", () => {
+    const onChange = spy();
+    const wrapper = shallow(<Field name="example" onChange={onChange} />);
+    wrapper.instance().setValue("some value");
+    expect(onChange.calledOnce).to.be.true;
+    expect(onChange.calledWith({
+      currentTarget: {
+        value: "some value",
+      },
+      target: {
+        value: "some value",
+      },
+    })).to.be.true;
+  });
+
   it("should run validation immediately with own value upon setting", () => {
     const wrapper = shallow(
       <Field name="example" />
