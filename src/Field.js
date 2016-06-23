@@ -52,6 +52,12 @@ class Field extends React.Component {
     if (this.props.validateOnMount) {
       this.validate(void 0, true);
     }
+
+    // Set valid to true when no children, i.e. rules are present
+    if (!this.rules().length) {
+      this.setValid(true);
+    }
+
   }
 
   componentWillReceiveProps(nextProps) {

@@ -23,6 +23,22 @@ describe("<Field /> component", () => {
     expect(wrapper.instance().getValue()).to.be.equal(null);
   });
 
+  it("should set valid to null on mount", () => {
+    const wrapper = shallow(
+      <Field name="example">
+        <MyFunc />
+      </Field>
+    );
+    expect(wrapper.state("_valid")).to.be.equal(null);
+  });
+
+  it("should set valid to true on mount when no rules exist", () => {
+    const wrapper = mount(
+      <Field name="example" />
+    );
+    expect(wrapper.state("_valid")).to.be.true;
+  });
+
   it("should run validation immediately if validateOnMount is passed", () => {
     const Valid = () => true;
     const wrapper = mount(
