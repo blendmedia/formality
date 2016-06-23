@@ -43,6 +43,7 @@
   "dependencies": {
     "classnames": "^2.2.5",
     "core-decorators": "^0.12.3",
-    "debounce": "^1.0.0"
+    "debounce": "^1.0.0",
+    "validator": "^5.4.0"
   }
 }
