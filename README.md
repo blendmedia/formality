@@ -29,7 +29,7 @@ import { Input, isEmail } from "@thinmartian/formality";
 ```javascript
 import { Input, Required } from "@thinmartian/formality";
 
-<input name="username">
+<Input name="username">
     <Required message="Please supply a username" />
 </Input>
 ```
@@ -71,7 +71,7 @@ const MyCustomValidator = ({ value, is /* props */}) => {
 
 ### Creating a validator (from a boolean function via compose)
 
-```
+```javascript
 import { compose } from "@thinmartian/formality"
 import isAlpha from "validator/lib/isAlpha"
 
