@@ -30,10 +30,10 @@ describe("<Form /> component", () => {
 
     expect(wrapper.state()).to.contain({
       "_field_name_value": null,
-      "_field_name_valid": null,
+      "_field_name_valid": true,
       "_field_name_message": null,
       "_field_password_value": null,
-      "_field_password_valid": null,
+      "_field_password_valid": true,
       "_field_password_message": null,
     });
   });
