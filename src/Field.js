@@ -35,6 +35,8 @@ class Field extends React.Component {
     _validating: false,
   };
 
+  clearOnChange = true;
+
   constructor(props) {
     super(props);
     if (props.debounce) {
@@ -82,9 +84,11 @@ class Field extends React.Component {
                    this.setState({
                      _value: value,
                    });
+
     if (this.clearOnChange) {
       this.show(false);
     }
+
     this.validate(value);
 
     if (this.props.onChange) {
@@ -159,7 +163,7 @@ class Field extends React.Component {
       if (typeof validator === "function") {
         return {
           fn: validator,
-          options: rule.props,
+          __opts: rule.props,
         };
       } else {
         if (process.env.NODE_ENV === "development") {
@@ -170,109 +174,113 @@ class Field extends React.Component {
     }).filter(rule => !!rule);
   }
 
+  process(result, { message, key }) {
+    if (typeof result === "object") {
+      // Determine message & key values
+      message = message || result.message || this.props.errorMessage;
+      key = key || result.key;
+      return {
+        message,
+        key,
+        valid: !!result.valid,
+      };
+    } else {
+      return {
+        valid: !!result,
+        message: message || this.props.errorMessage,
+        key,
+      };
+    }
+  }
+
   validate(value = this.getValue(), ignoreDebounce = false) {
-    let { errorMessage } = this.props;
-    let key = null;
-    const isValid = result => {
-      if (typeof result === "object") {
-        // Assign error message if found
-        if ("message" in result) {
-          errorMessage = result.message;
-        }
-        if ("key" in result && !result.valid) {
-          key = result.key;
-        }
-        return result.valid;
-      } else {
-        return !!result; // Treat as boolean / null / undefined
-      }
-    };
     let async = false;
-    // Resolve all rules as promises
+
     const promises = [];
-    const results = [];
+    const rules = this.rules();
 
+    // No rules = always valid
+    if (!rules.length) {
+      this.setValid(true);
+      return;
+    }
 
-
-    let valid = true;
+    let { valid, message, key } = { valid: true };
     // Iterate over provided rules
-    for (const rule of this.rules()) {
+    for (const rule of rules) {
       // Separate promises
-      if (rule.fn.async || rule.options.async) {
+      if (rule.fn.async || rule.__opts.async) {
         async = true;
-        promises.push(rule.fn);
+        promises.push(() =>
+          Object.assign(rule.fn({ ...rule.__opts, value }), {
+            "__opts": rule.__opts,
+          })
+        );
       } else {
-        const result = rule.fn({ ...rule.options, value });
+        const result = rule.fn({ ...rule.__opts, value });
         if (typeof result.then === "function") {
           async = true;
-          promises.push(() => result);
+          promises.push(() => Object.assign(result, {
+            "__opts": rule.__opts,
+          }));
         } else {
-          results.push(result);
+          ({ valid, message, key } = this.process(result, rule.__opts));
           // Exit as soon as we're invalid
-          if (!isValid(result)) {
-            if (rule.fn.noDebounce || rule.options.noDebounce) {
+          if (!valid) {
+            if (rule.fn.noDebounce || rule.__opts.noDebounce) {
               ignoreDebounce = true;
             }
-            valid = false;
             break;
           }
         }
       }
     }
-
     // Process promises
     if (valid && async) {
       // Set flag for async processing
       this.setValid(null, null, null, ignoreDebounce);
       this.show(false);
-
       this.asyncValidation(promises);
+      return;
     }
 
     if (!async || !valid) {
       // Finished processing
       this.setState({ _validating: false });
-      this.setValid(valid, errorMessage, key, ignoreDebounce);
-
+      this.setValid(valid, message, key, ignoreDebounce);
       return Promise.resolve(valid);
+    }
+
+    if (valid) {
+      this.setValid(true);
     }
 
   }
 
   _asyncValidation(promises) {
     this.setState({ _validating: true });
-    let { errorMessage } = this.props;
-    let key = null;
-    const isValid = result => {
-      if (typeof result === "object") {
-        // Assign error message if found
-        if ("message" in result) {
-          errorMessage = result.message;
+    promises = promises.map(f => f());
+    Promise.all(promises).then(results => {
+      for (const [index, result] of results.entries()) {
+        const state = this.process(result, promises[index]);
+        if (!state.valid) {
+          return state;
         }
-        if ("key" in result && !result.valid) {
-          key = result.key;
-        }
-        return result.valid;
-      } else {
-        return !!result; // Treat as boolean / null / undefined
       }
-    };
 
-    Promise.all(promises.map(f => f())).then(results => {
-      return results.every(result => {
-        return isValid(result);
-      });
+      return {
+        valid: true,
+      };
     }, error => {
-      // Use error message if valid also sent
-      if (error && error.message && "valid" in error) {
-        errorMessage = error.message;
-      }
-      return false;
+      return {
+        valid: false,
+        message: error.message || this.props.errorMessage,
+      };
     })
-    .then(valid => {
+    .then(({ valid, message, key }) => {
       // Finished processing
       this.setState({ _validating: false });
-      this.setValid(valid, errorMessage, key, true);
+      this.setValid(valid, message, key, true);
       return valid;
     });
   }
