@@ -79,11 +79,13 @@ class Field extends React.Component {
 
   setValue(value, event = {}) {
     const { name } = this.props;
-    const result = this.context.setValue ?
-                   this.context.setValue(name, value) :
-                   this.setState({
-                     _value: value,
-                   });
+    if (this.context.setValue) {
+      this.context.setValue(name, value);
+    } else {
+      this.setState({
+        _value: value,
+      });
+    }
 
     if (this.clearOnChange) {
       this.show(false);
