@@ -93,11 +93,10 @@ class Field extends React.Component {
 
     if (this.props.onChange) {
       const e = { currentTarget: {}, target: {}, ...event};
-      e.currentTarget.value = e.target.value = value;
+      e.currentTarget = { ...e.currentTarget, value };
+      e.target = { ...e.target, value };
       this.props.onChange(e);
     }
-
-    return result;
   }
 
   setValid(valid, msg = null, key = null, ignoreDebounce = false) {
