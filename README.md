@@ -10,7 +10,7 @@ Alternatively your inputs can be wrapped in a `<Form />` component which will re
 
 ### Simple validation
 
-Validation is done by passing validation functions as children to an Input component. This method is inspired by the [validation library by vacuumlabs](https://github.com/vacuumlabs/validation) ([Video](https://www.youtube.com/watch?v=FqscLiODo5c)].
+Validation is done by passing validation functions as children to an Input component. This method is inspired by the [validation library by vacuumlabs](https://github.com/vacuumlabs/validation) ([Video](https://www.youtube.com/watch?v=FqscLiODo5c)).
 
 ## Usage
 
