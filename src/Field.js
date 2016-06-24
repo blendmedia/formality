@@ -163,7 +163,7 @@ class Field extends React.Component {
       if (typeof validator === "function") {
         return {
           fn: validator,
-          __opts: rule.props,
+          __opts: {...rule.props},
         };
       } else {
         if (process.env.NODE_ENV === "development") {
@@ -178,7 +178,7 @@ class Field extends React.Component {
     if (typeof result === "object") {
       // Determine message & key values
       message = message || result.message || this.props.errorMessage;
-      key = key || result.key;
+      key = result.key || key;
       return {
         message,
         key,
