@@ -1,7 +1,7 @@
 import React, { PropTypes } from "react";
-import classnames from "classnames";
 
 import Field from "../Field";
+import PlainInput from "./PlainInput";
 
 class Input extends Field {
   static propTypes = {
@@ -17,33 +17,17 @@ class Input extends Field {
   };
 
   render() {
-    const { className: cls, type } = this.props;
-    const value = this.getValue();
-    const error = this.error();
-    const errorKey = this.errorKey();
-    const valid = this.isValid();
-    const invalid = this.isValid() === false;
-
     return (
-      <div
-        className={classnames(cls, {
-          [`${cls}--error`]: invalid,
-          [`${cls}--valid`]: valid,
-          [`${cls}--working`]: this.isProcessing(),
-          [errorKey ? `${cls}--error--${errorKey}` : false]: invalid,
-        })}
-      >
-        <span className={`${cls}__error`}>{error}</span>
-        <input
-          {...this.props}
-          children={void 0}
-          className={`${cls}__control`}
-          defaultValue={void 0}
-          onChange={this.handleChange}
-          type={type}
-          value={value || ""}
-        />
-      </div>
+      <PlainInput
+        {...this.props}
+        error={this.error()}
+        errorKey={this.errorKey()}
+        invalid={this.isValid() === false}
+        onChange={this.handleChange}
+        processing={this.isProcessing()}
+        valid={this.isValid()}
+        value={this.getValue()}
+      />
     );
   }
 }
