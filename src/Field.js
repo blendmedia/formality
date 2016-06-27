@@ -288,7 +288,6 @@ class Field extends React.Component {
 
   @autobind
   handleChange(e) {
-    console.log("CHANGING");
     const { currentTarget: { value } } = e;
     this.setValue(value, e);
   }

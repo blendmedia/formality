@@ -6,7 +6,7 @@ if (!process.env.NODE_ENV) {
 
 export Form from "./Form";
 export Field from "./Field";
-export PlainInput from "./fields/Input";
+export PlainInput from "./fields/PlainInput";
 export Input from "./fields/Input";
 export Select from "./fields/Select";
 export Checkbox from "./fields/Checkbox";
