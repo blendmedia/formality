@@ -12,7 +12,9 @@
     "compile": "babel src/ --out-dir lib/",
     "compile:watch": "npm run compile -- --watch",
     "precompile": "npm run test",
-    "prepublish": "npm run compile"
+    "prepublish": "npm run compile",
+    "preversion": "npm run test",
+    "postversion": "git push && git push --tags"
   },
   "files": [
     "lib"
