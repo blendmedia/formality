@@ -1,6 +1,6 @@
 {
   "name": "@thinmartian/formality",
-  "version": "1.0.0-alpha.8",
+  "version": "1.0.0-alpha.9",
   "description": "A simple and composable react form library",
   "main": "lib/index.js",
   "repository": "git@github.com:thinmartian/formality.git",
