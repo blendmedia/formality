@@ -1,4 +1,5 @@
 import React, { PropTypes } from "react";
+import classnames from "classnames";
 import { autobind } from "core-decorators";
 
 class Form extends React.Component {
@@ -135,8 +136,15 @@ class Form extends React.Component {
   }
 
   render() {
+    const valid = this.isValid();
     return (
-      <form onSubmit={this.handleSubmit}>
+      <form
+        className={classnames("Formality", {
+          "Formality--valid": valid,
+          "Formality--invalid": !valid,
+        })}
+        onSubmit={this.handleSubmit}
+      >
         {this.props.children}
       </form>
     );
