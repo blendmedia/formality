@@ -23,6 +23,7 @@ class Form extends React.Component {
     setValue: PropTypes.func,
     setValid: PropTypes.func,
     getError: PropTypes.func,
+    getErrorKey: PropTypes.func,
     isValid: PropTypes.func,
     register: PropTypes.func,
   };
@@ -83,10 +84,16 @@ class Form extends React.Component {
   }
 
   @autobind
-  setFieldValid(name, valid, message) {
+  getErrorKey(name) {
+    return this.getFieldState(name, "error_key");
+  }
+
+  @autobind
+  setFieldValid(name, valid, message, error_key) {
     this.setFieldState(name, {
       valid,
       message,
+      error_key,
     });
   }
 

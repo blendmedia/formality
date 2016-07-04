@@ -23,6 +23,7 @@ class Field extends React.Component {
     setValue: PropTypes.func,
     setValid: PropTypes.func,
     getError: PropTypes.func,
+    getErrorKey: PropTypes.func,
     isValid: PropTypes.func,
     register: PropTypes.func,
   };
@@ -109,7 +110,7 @@ class Field extends React.Component {
       this.show(valid === false);
     }
     return this.context.setValid ?
-           this.context.setValid(name, valid, msg) :
+           this.context.setValid(name, valid, msg, key) :
            this.setState({
              _invalid_on: key,
              _valid: valid,
@@ -154,7 +155,12 @@ class Field extends React.Component {
   }
 
   errorKey() {
-    return this.state._show ? this.state._invalid_on : null;
+    if (!this.state._show) {
+      return null;
+    }
+
+    return this.context.getErrorKey ? this.context.getErrorKey(name) :
+                                      this.state._invalid_on;
   }
 
   rules() {
