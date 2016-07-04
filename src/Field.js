@@ -159,6 +159,7 @@ class Field extends React.Component {
       return null;
     }
 
+    const { name } = this.props;
     return this.context.getErrorKey ? this.context.getErrorKey(name) :
                                       this.state._invalid_on;
   }
