@@ -207,7 +207,7 @@ class Field extends React.Component {
 
     const promises = [];
     const rules = this.rules();
-    const all = this.context.getAllValues ? this.context.getAllValues : {};
+    const all = this.context.getAllValues ? this.context.getAllValues() : {};
 
     // No rules = always valid
     if (!rules.length) {
