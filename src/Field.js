@@ -6,6 +6,7 @@ class Field extends React.Component {
   static propTypes = {
     children: PropTypes.node,
     debounce: PropTypes.number.isRequired,
+    defaultValue: PropTypes.any,
     errorMessage: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
     onChange: PropTypes.func.isRequired,
@@ -64,11 +65,21 @@ class Field extends React.Component {
       this.setValid(true);
     }
 
+    const { defaultValue } = this.props;
+    if (defaultValue) {
+      this.setValue(defaultValue);
+    }
+
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.validateOnMount) {
       this.validate(void 0, true);
+    }
+
+    const { defaultValue } = nextProps;
+    if (defaultValue && defaultValue !== this.props.defaultValue) {
+      this.setValue(defaultValue);
     }
   }
 
