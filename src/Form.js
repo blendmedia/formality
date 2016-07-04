@@ -69,17 +69,17 @@ class Form extends React.Component {
 
   @autobind
   getValue(name) {
-    this.getFieldState(name, "value");
+    return this.getFieldState(name, "value");
   }
 
   @autobind
   isFieldValid(name) {
-    this.getFieldState(name, "valid");
+    return this.getFieldState(name, "valid");
   }
 
   @autobind
   getError(name) {
-    this.getFieldState(name, "message");
+    return this.getFieldState(name, "message");
   }
 
   @autobind
