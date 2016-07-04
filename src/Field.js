@@ -26,6 +26,7 @@ class Field extends React.Component {
     getErrorKey: PropTypes.func,
     isValid: PropTypes.func,
     register: PropTypes.func,
+    getAllValues: PropTypes.func,
   };
 
   state = {
@@ -206,6 +207,7 @@ class Field extends React.Component {
 
     const promises = [];
     const rules = this.rules();
+    const all = this.context.getAllValues ? this.context.getAllValues : {};
 
     // No rules = always valid
     if (!rules.length) {
@@ -220,19 +222,19 @@ class Field extends React.Component {
       if (rule.fn.async || rule.__opts.async) {
         async = true;
         promises.push(() =>
-          Object.assign(rule.fn({ ...rule.__opts, value }), {
+          Object.assign(rule.fn({ ...rule.__opts, value, all }), {
             "__opts": rule.__opts,
           })
         );
       } else {
-        const result = rule.fn({ ...rule.__opts, value });
+        const result = rule.fn({ ...rule.__opts, value, all });
         if (typeof result.then === "function") {
           async = true;
           promises.push(() => Object.assign(result, {
             "__opts": rule.__opts,
           }));
         } else {
-          ({ valid, message, key } = this.process(result, rule.__opts));
+          ({ valid, message, key } = this.process(result, rule.__opts, all));
           // Exit as soon as we're invalid
           if (!valid) {
             if (rule.fn.noDebounce || rule.__opts.noDebounce) {

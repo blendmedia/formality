@@ -26,6 +26,7 @@ class Form extends React.Component {
     getErrorKey: PropTypes.func,
     isValid: PropTypes.func,
     register: PropTypes.func,
+    getAllValues: PropTypes.func,
   };
 
   setFieldState(name, keys, value) {
@@ -106,6 +107,7 @@ class Form extends React.Component {
       getError: this.getError,
       getErrorKey: this.getErrorKey,
       isValid: this.isFieldValid,
+      getAllValues: this.values,
     };
   }
 
@@ -130,6 +132,7 @@ class Form extends React.Component {
     return true;
   }
 
+  @autobind
   values() {
     const data = {};
     const valueMatcher = /^_field_(\w+)_value$/;
