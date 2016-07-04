@@ -104,6 +104,7 @@ class Form extends React.Component {
       getValue: this.getValue,
       setValid: this.setFieldValid,
       getError: this.getError,
+      getErrorKey: this.getErrorKey,
       isValid: this.isFieldValid,
     };
   }
