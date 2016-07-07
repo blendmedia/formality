@@ -27,6 +27,10 @@ class Checkbox extends Field {
 
   clearOnChange = false;
 
+  state = {
+    focused: false,
+  };
+
   @autobind
   handleChange(e) {
     const { currentTarget } = e;
@@ -40,7 +44,22 @@ class Checkbox extends Field {
     });
   }
 
+  @autobind
+  handleFocus() {
+    this.setState({
+      focused: true,
+    });
+  }
+
+  @autobind
+  handleBlur() {
+    this.setState({
+      focused: false,
+    });
+  }
+
   render() {
+    const { focused } = this.state;
     const { className: cls, label } = this.props;
     const checked = !!this.getValue();
     const error = this.error();
@@ -53,6 +72,7 @@ class Checkbox extends Field {
           [`${cls}--error`]: valid,
           [`${cls}--working`]: this.isProcessing(),
           [`${cls}--checked`]: checked,
+          [`${cls}--focus`]: focused,
           [errorKey ? `${cls}--error--${errorKey}` : false]: valid,
         })}
       >
@@ -64,7 +84,9 @@ class Checkbox extends Field {
             children={void 0}
             className={`${cls}__control`}
             defaultValue={void 0}
+            onBlur={this.handleBlur}
             onChange={this.handleChange}
+            onFocus={this.handleFocus}
             type="checkbox"
           />
           {label}
