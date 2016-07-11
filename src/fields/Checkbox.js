@@ -60,7 +60,14 @@ class Checkbox extends Field {
 
   render() {
     const { focused } = this.state;
-    const { className: cls, label } = this.props;
+
+    const {
+      className: cls,
+      debounce, // eslint-disable-line no-unused-vars
+      errorMessage, // eslint-disable-line no-unused-vars
+      label,
+      ...props,
+    } = this.props;
     const checked = !!this.getValue();
     const error = this.error();
     const errorKey = this.errorKey();
@@ -79,7 +86,7 @@ class Checkbox extends Field {
         <span className={`${cls}__error`}>{error}</span>
         <label className={`${cls}__label`}>
           <input
-            {...this.props}
+            {...props}
             checked={checked}
             children={void 0}
             className={`${cls}__control`}
