@@ -194,11 +194,11 @@ class Field extends React.Component {
     }).filter(rule => !!rule);
   }
 
-  process(result, { message, key }) {
+  process(result, { message, key, errorKey }) {
     if (typeof result === "object") {
       // Determine message & key values
       message = message || result.message || this.props.errorMessage;
-      key = result.key || key;
+      key = result.key || key || errorKey;
       return {
         message,
         key,
