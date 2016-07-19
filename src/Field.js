@@ -144,7 +144,7 @@ class Field extends React.Component {
 
   error() {
     const { name } = this.props;
-    if (!this.state._show) {
+    if (this.isValid() !== false) {
       return null;
     }
     return this.context.getError ?
