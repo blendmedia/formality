@@ -123,7 +123,7 @@ class Form extends React.Component {
   }
 
   isValid() {
-    const validMatcher = /^_field_\w+_valid$/;
+    const validMatcher = /^_field_.*?_valid$/;
     for (const key in this.state) {
       if (validMatcher.test(key) && !this.state[key]) {
         return false;
@@ -135,7 +135,7 @@ class Form extends React.Component {
   @autobind
   values() {
     const data = {};
-    const valueMatcher = /^_field_(\w+)_value$/;
+    const valueMatcher = /^_field_(.*?)_value$/;
     for (const key in this.state) {
       const matches = key.match(valueMatcher);
       if (!matches) {
