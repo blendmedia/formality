@@ -73,7 +73,7 @@ class Field extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.validateOnMount) {
+    if (nextProps.validateOnMount && !this.props.validateOnMount) {
       this.validate(void 0, true);
     }
 
