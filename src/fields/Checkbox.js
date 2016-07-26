@@ -7,22 +7,15 @@ import Field from "../Field";
 class Checkbox extends Field {
   static propTypes = {
     ...Field.propTypes,
+    checkedValue: PropTypes.any.isRequired,
     className: PropTypes.string.isRequired,
     label: PropTypes.string,
-    options: PropTypes.arrayOf(PropTypes.oneOfType([
-      PropTypes.string,
-      PropTypes.shape({
-        label: PropTypes.string.isRequired,
-        value: PropTypes.string.isRequired,
-      }),
-    ])),
-    value: PropTypes.any.isRequired,
   };
 
   static defaultProps = {
     ...Field.defaultProps,
     className: "Checkbox",
-    value: true,
+    checkedValue: true,
   };
 
   clearOnChange = false;
@@ -34,7 +27,7 @@ class Checkbox extends Field {
   @autobind
   handleChange(e) {
     const { currentTarget } = e;
-    const value = currentTarget.checked ? this.props.value : false;
+    const value = currentTarget.checked ? this.props.checkedValue : false;
     super.handleChange({
       ...e,
       currentTarget: {
