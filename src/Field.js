@@ -11,6 +11,7 @@ class Field extends React.Component {
     name: PropTypes.string.isRequired,
     onChange: PropTypes.func.isRequired,
     validateOnMount: PropTypes.bool,
+    value: PropTypes.any,
   };
 
   static defaultProps = {
@@ -85,6 +86,9 @@ class Field extends React.Component {
 
   getValue() {
     const { name } = this.props;
+    if ("value" in this.props) {
+      return this.props.value;
+    }
     return this.context.getValue ?
            this.context.getValue(name) :
            this.state._value;
