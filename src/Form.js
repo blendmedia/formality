@@ -55,6 +55,29 @@ class Form extends React.Component {
     }
   }
 
+  reset(except = []) {
+    const valueMatcher = /^_field_(.*?)_value$/;
+    const nextState = {};
+    for (const key in this.state) {
+      // Skip non-matching
+      const matches = key.match(valueMatcher);
+      if (!matches) {
+        continue;
+      }
+      // Skip ignored
+      const name = matches[1];
+      if (except.indexOf(name) > -1) {
+        continue;
+      }
+
+      nextState[`_field_${name}_value`] = null;
+      nextState[`_field_${name}_valid`] = null;
+      nextState[`_field_${name}_message`] = null;
+      nextState[`_field_${name}_error_key`] = null;
+    }
+    this.setState(nextState);
+  }
+
   @autobind
   register(name) {
     this.setFieldState(name, {
