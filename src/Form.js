@@ -5,12 +5,14 @@ import { autobind } from "core-decorators";
 class Form extends React.Component {
   static propTypes = {
     children: PropTypes.node,
+    onChange: PropTypes.func.isRequired,
     onSubmit: PropTypes.func.isRequired,
     submitOnInvalid: PropTypes.bool,
   };
 
   static defaultProps = {
     onSubmit: () => {},
+    onChange: () => {},
     submitOnInvalid: false,
   };
 
@@ -41,6 +43,7 @@ class Form extends React.Component {
       newState[`_field_${name}_${key}`] = keys[key];
     }
     this.setState(newState);
+    this.props.onChange(this);
   }
 
   getFieldState(name, keys) {
@@ -156,7 +159,10 @@ class Form extends React.Component {
   }
 
   @autobind
-  values() {
+  values(fields = null) {
+    if (fields && fields instanceof Array) {
+      return fields.every(f => this.isFieldValid(f));
+    }
     const data = {};
     const valueMatcher = /^_field_(.*?)_value$/;
     for (const key in this.state) {
