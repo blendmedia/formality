@@ -147,7 +147,10 @@ class Form extends React.Component {
     }
   }
 
-  isValid() {
+  isValid(fields = null) {
+    if (fields && fields instanceof Array) {
+      return fields.every(f => this.isFieldValid(f));
+    }
     const validMatcher = /^_field_.*?_valid$/;
     for (const key in this.state) {
       if (validMatcher.test(key) && !this.state[key]) {
@@ -158,10 +161,7 @@ class Form extends React.Component {
   }
 
   @autobind
-  values(fields = null) {
-    if (fields && fields instanceof Array) {
-      return fields.every(f => this.isFieldValid(f));
-    }
+  values() {
     const data = {};
     const valueMatcher = /^_field_(.*?)_value$/;
     for (const key in this.state) {
