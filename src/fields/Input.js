@@ -17,9 +17,21 @@ class Input extends Field {
   };
 
   render() {
+    /* eslint-disable */
+    const {
+      children,
+      defaultValue,
+      onChange,
+      debounce,
+      validateOnMount,
+      value,
+      errorMessage,
+      ...props,
+    } = this.props;
+    /* eslint-enable  */
     return (
       <PlainInput
-        {...this.props}
+        {...props}
         error={this.error()}
         errorKey={this.errorKey()}
         invalid={this.isValid() === false}

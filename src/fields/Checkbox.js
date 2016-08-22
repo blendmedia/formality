@@ -58,6 +58,7 @@ class Checkbox extends Field {
       className: cls,
       debounce, // eslint-disable-line no-unused-vars
       errorMessage, // eslint-disable-line no-unused-vars
+      checkedValue, // eslint-disable-line no-unused-vars
       label,
       ...props,
     } = this.props;
