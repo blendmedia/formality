@@ -42,8 +42,7 @@ class Form extends React.Component {
     for (const key in keys) {
       newState[`_field_${name}_${key}`] = keys[key];
     }
-    this.setState(newState);
-    this.props.onChange(this);
+    this.setState(newState, () => this.props.onChange(this));
   }
 
   getFieldState(name, keys) {
