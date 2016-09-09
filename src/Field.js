@@ -64,6 +64,7 @@ class Field extends React.Component {
     // Set valid to true when no children, i.e. rules are present
     if (!this.rules().length) {
       this.setValid(true);
+      this.setHasValidation(false);
     }
 
     const { defaultValue } = this.props;
@@ -118,6 +119,12 @@ class Field extends React.Component {
       e.currentTarget = { ...e.currentTarget, value };
       e.target = { ...e.target, value };
       this.props.onChange(e);
+    }
+  }
+
+  setHasValidation(rules) {
+    if (this.context.setHasValidation) {
+      this.context.setHasValidation(this.props.name, rules);
     }
   }
 
@@ -230,7 +237,10 @@ class Field extends React.Component {
     // No rules = always valid
     if (!rules.length) {
       this.setValid(true);
+      this.setHasValidation(false);
       return;
+    } else {
+      this.setHasValidation(true);
     }
 
     let { valid, message, key } = { valid: true };

@@ -31,6 +31,10 @@ class Form extends React.Component {
     getAllValues: PropTypes.func,
   };
 
+  setHasValidation(name, val) {
+    this.setFieldState(name, "should_validate", val);
+  }
+
   setFieldState(name, keys, value) {
     if (typeof keys === "string") {
       keys = {
@@ -72,8 +76,10 @@ class Form extends React.Component {
         continue;
       }
 
+      const shouldValidate = this.getFieldState(name, "should_validate");
+
       nextState[`_field_${name}_value`] = null;
-      nextState[`_field_${name}_valid`] = null;
+      nextState[`_field_${name}_valid`] = shouldValidate ? null : true;
       nextState[`_field_${name}_message`] = null;
       nextState[`_field_${name}_error_key`] = null;
     }
