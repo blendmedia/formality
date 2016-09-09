@@ -22,6 +22,7 @@ class Form extends React.Component {
 
   static childContextTypes = {
     getValue: PropTypes.func,
+    setHasValidation: PropTypes.func,
     setValue: PropTypes.func,
     setValid: PropTypes.func,
     getError: PropTypes.func,
@@ -76,10 +77,10 @@ class Form extends React.Component {
         continue;
       }
 
-      const shouldValidate = this.getFieldState(name, "should_validate");
+      const validate = this.getFieldState(name, "should_validate");
 
       nextState[`_field_${name}_value`] = null;
-      nextState[`_field_${name}_valid`] = shouldValidate ? null : true;
+      nextState[`_field_${name}_valid`] = validate === false ? true : null;
       nextState[`_field_${name}_message`] = null;
       nextState[`_field_${name}_error_key`] = null;
     }

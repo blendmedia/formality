@@ -21,6 +21,7 @@ class Field extends React.Component {
   };
 
   static contextTypes = {
+    setHasValidation: PropTypes.func,
     getValue: PropTypes.func,
     setValue: PropTypes.func,
     setValid: PropTypes.func,
