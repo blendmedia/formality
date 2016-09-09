@@ -32,6 +32,7 @@ class Form extends React.Component {
     getAllValues: PropTypes.func,
   };
 
+  @autobind
   setHasValidation(name, val) {
     this.setFieldState(name, "should_validate", val);
   }
@@ -134,6 +135,7 @@ class Form extends React.Component {
     return {
       register: this.register,
       setValue: this.setValue,
+      setHasValidation: this.setHasValidation,
       getValue: this.getValue,
       setValid: this.setFieldValid,
       getError: this.getError,
