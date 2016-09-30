@@ -69,7 +69,9 @@ class Field extends React.Component {
     }
 
     const { defaultValue } = this.props;
-    if (defaultValue) {
+    if (
+      defaultValue !== null && defaultValue !== void 0
+    ) {
       this.setValue(defaultValue);
     }
 
@@ -82,7 +84,7 @@ class Field extends React.Component {
 
     const { defaultValue } = nextProps;
     if (
-      (defaultValue !== null || defaultValue !== void 0) &&
+      (defaultValue !== null && defaultValue !== void 0) &&
       defaultValue !== this.props.defaultValue
     ) {
       this.setValue(defaultValue);
