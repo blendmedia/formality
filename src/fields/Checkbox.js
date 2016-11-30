@@ -9,6 +9,7 @@ class Checkbox extends Field {
     ...Field.propTypes,
     checkedValue: PropTypes.any.isRequired,
     className: PropTypes.string.isRequired,
+    explicitValue: PropTypes.bool,
     label: PropTypes.string,
   };
 
@@ -62,7 +63,13 @@ class Checkbox extends Field {
       label,
       ...props,
     } = this.props;
-    const checked = !!this.getValue();
+    let checked = null;
+
+    if (this.props.explicitValue) {
+      checked = this.getValue() === this.props.checkedValue;
+    } else {
+      checked = !!this.getValue();
+    }
     const error = this.error();
     const errorKey = this.errorKey();
     const valid = this.isValid() === false;
