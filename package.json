@@ -1,9 +1,9 @@
 {
-  "name": "@thinmartian/formality",
+  "name": "@blendmedia/formality",
   "version": "1.0.0-alpha.37",
   "description": "A simple and composable react form library",
   "main": "lib/index.js",
-  "repository": "git@github.com:thinmartian/formality.git",
+  "repository": "git@github.com:blendmedia/formality.git",
   "scripts": {
     "lint": "eslint src/ test/",
     "test": "mocha --compilers js:babel-register --recursive",
@@ -19,6 +19,7 @@
   "files": [
     "lib"
   ],
+  "private": false,
   "author": "Ashley Blurton",
   "license": "ISC",
   "devDependencies": {
