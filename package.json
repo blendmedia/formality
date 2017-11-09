@@ -1,6 +1,6 @@
 {
   "name": "@blendmedia/formality",
-  "version": "1.0.0-alpha.38",
+  "version": "1.0.0-alpha.39",
   "description": "A simple and composable react form library",
   "main": "lib/index.js",
   "repository": "git@github.com:blendmedia/formality.git",
@@ -11,7 +11,6 @@
     "pretest": "npm run lint",
     "compile": "babel src/ --out-dir lib/",
     "compile:watch": "npm run compile -- --watch",
-    "precompile": "npm run test",
     "prepublish": "npm run compile",
     "preversion": "npm run test",
     "postversion": "git push && git push --tags"
@@ -40,13 +39,14 @@
     "sinon": "^1.17.4"
   },
   "peerDependencies": {
-    "react": "^15.0.0-0",
-    "react-dom": "^15.0.0-0"
+    "react": "^16.0.0-0",
+    "react-dom": "^16.0.0-0"
   },
   "dependencies": {
     "classnames": "^2.2.5",
     "core-decorators": "^0.12.3",
     "debounce": "^1.0.0",
+    "prop-types": "^15.6.0",
     "validator": "^5.4.0"
   }
 }
